@@ -265,8 +265,33 @@ class DatabaseHelper {
   // CATÁLOGO
   // ===========================================================================
 
+  /// Registro constante de iconos (permite el tree-shaking en release).
+  /// Solo se usan instancias const de IconData: si un codePoint de la
+  /// base de datos no está aquí, se muestra el icono por defecto.
+  static const Map<int, IconData> _iconRegistry = {
+    Icons.hot_tub.codePoint: Icons.hot_tub,
+    Icons.lunch_dining.codePoint: Icons.lunch_dining,
+    Icons.fastfood.codePoint: Icons.fastfood,
+    Icons.restaurant_menu.codePoint: Icons.restaurant_menu,
+    Icons.set_meal.codePoint: Icons.set_meal,
+    Icons.local_drink.codePoint: Icons.local_drink,
+    Icons.local_fire_department.codePoint: Icons.local_fire_department,
+    Icons.star.codePoint: Icons.star,
+    Icons.workspace_premium.codePoint: Icons.workspace_premium,
+    Icons.layers.codePoint: Icons.layers,
+    Icons.wrap_text.codePoint: Icons.wrap_text,
+    Icons.dinner_dining.codePoint: Icons.dinner_dining,
+    Icons.category.codePoint: Icons.category,
+    Icons.inventory_2.codePoint: Icons.inventory_2,
+    Icons.restaurant.codePoint: Icons.restaurant,
+    Icons.store.codePoint: Icons.store,
+    Icons.local_pizza.codePoint: Icons.local_pizza,
+    Icons.icecream.codePoint: Icons.icecream,
+    Icons.coffee.codePoint: Icons.coffee,
+  };
+
   IconData _iconFromCode(int codePoint) =>
-      IconData(codePoint, fontFamily: 'MaterialIcons');
+      _iconRegistry[codePoint] ?? Icons.restaurant;
 
   Future<List<Map<String, dynamic>>> loadAllData() async {
     final db = await instance.database;
