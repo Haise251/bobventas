@@ -54,9 +54,12 @@ android {
                 signingConfigs.getByName("debug")
             }
 
-            // Optimizaciones estándar.
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // R8/minify DESACTIVADO (valor por defecto de Flutter).
+            // El código Dart ya se compila AOT a libapp.so; minificar solo
+            // afecta al embedding Android y dispara errores de clases
+            // faltantes (Play Core) con los plugins. Si algún día se
+            // reactiva, proguard-rules.pro ya trae las reglas necesarias.
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
