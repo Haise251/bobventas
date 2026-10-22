@@ -265,29 +265,35 @@ class DatabaseHelper {
   // CATÁLOGO
   // ===========================================================================
 
-  /// Registro constante de iconos (permite el tree-shaking en release).
-  /// Solo se usan instancias const de IconData: si un codePoint de la
-  /// base de datos no está aquí, se muestra el icono por defecto.
-  static const Map<int, IconData> _iconRegistry = {
-    Icons.hot_tub.codePoint: Icons.hot_tub,
-    Icons.lunch_dining.codePoint: Icons.lunch_dining,
-    Icons.fastfood.codePoint: Icons.fastfood,
-    Icons.restaurant_menu.codePoint: Icons.restaurant_menu,
-    Icons.set_meal.codePoint: Icons.set_meal,
-    Icons.local_drink.codePoint: Icons.local_drink,
-    Icons.local_fire_department.codePoint: Icons.local_fire_department,
-    Icons.star.codePoint: Icons.star,
-    Icons.workspace_premium.codePoint: Icons.workspace_premium,
-    Icons.layers.codePoint: Icons.layers,
-    Icons.wrap_text.codePoint: Icons.wrap_text,
-    Icons.dinner_dining.codePoint: Icons.dinner_dining,
-    Icons.category.codePoint: Icons.category,
-    Icons.inventory_2.codePoint: Icons.inventory_2,
-    Icons.restaurant.codePoint: Icons.restaurant,
-    Icons.store.codePoint: Icons.store,
-    Icons.local_pizza.codePoint: Icons.local_pizza,
-    Icons.icecream.codePoint: Icons.icecream,
-    Icons.coffee.codePoint: Icons.coffee,
+  /// Iconos del catálogo como referencias directas (aptas para el
+  /// tree-shaking). IMPORTANTE: aquí NO se extrae .codePoint — hacer eso
+  /// dentro de un contexto const rompe el tree-shaking en release.
+  static const List<IconData> _catalogIcons = [
+    Icons.hot_tub,
+    Icons.lunch_dining,
+    Icons.fastfood,
+    Icons.restaurant_menu,
+    Icons.set_meal,
+    Icons.local_drink,
+    Icons.local_fire_department,
+    Icons.star,
+    Icons.workspace_premium,
+    Icons.layers,
+    Icons.wrap_text,
+    Icons.dinner_dining,
+    Icons.category,
+    Icons.inventory_2,
+    Icons.restaurant,
+    Icons.store,
+    Icons.local_pizza,
+    Icons.icecream,
+    Icons.coffee,
+  ];
+
+  /// Registro codePoint → IconData construido en RUNTIME (fuera de contexto
+  /// const) para no interferir con el tree-shaking de iconos.
+  static final Map<int, IconData> _iconRegistry = {
+    for (final icon in _catalogIcons) icon.codePoint: icon,
   };
 
   IconData _iconFromCode(int codePoint) =>
