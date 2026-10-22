@@ -1,0 +1,14 @@
+# Copia este archivo como `android/key.properties` y rellena tus valores.
+# NO subas key.properties ni el .jks a git (agrégalos a .gitignore).
+#
+# Ejecuta primero el script de la carpeta scripts/ para crear tu keystore:
+#   - Windows: scripts\generar_keystore_windows.bat
+#   - Linux/Mac: ./scripts/generar_keystore_linux_mac.sh
+#
+# storePassword y keyPassword: las contraseñas que elegiste al crear el
+# keystore (recuárdalas: las necesitarás para TODAS las futuras actualizaciones).
+
+storePassword=TU_CONTRASENA_DEL_KEYSTORE
+keyPassword=TU_CONTRASENA_DE_LA_LLAVE
+keyAlias=bob-ventas-key
+storeFile=../app/bob-ventas-key.jks

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Filtra dispositivos USB: la mayoría de impresoras térmicas 58mm
+     usan clase 7 (printer) o vendorId específico. Con este filtro la app
+     se ofrece al conectar el cable OTG. Si tu impresora no dispara el
+     aviso, no importa: la app la detecta igual desde Ajustes. -->
+<resources>
+    <usb-device class="7" />           <!-- USB printer class -->
+    <usb-device class="255" subclass="255" /> <!-- vendor-specific (comunes en POS-58) -->
+</resources>
