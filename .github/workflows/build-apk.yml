@@ -32,6 +32,13 @@ jobs:
       - name: Generar esqueleto Android (gradlew y archivos faltantes)
         run: flutter create --project-name bob_ventas --platforms android --org com.bobburgers .
 
+      - name: Desactivar resource shrinking cuando R8 está apagado
+        run: |
+          sed -i '/isShrinkResources = /d' android/app/build.gradle.kts
+          sed -i 's/isMinifyEnabled = true/isMinifyEnabled = false/' android/app/build.gradle.kts
+          sed -i '/isMinifyEnabled = false/a\            isShrinkResources = false' android/app/build.gradle.kts
+          grep -n -A1 'isMinifyEnabled' android/app/build.gradle.kts
+
       - name: Ajustar memoria de Gradle para el runner de CI
         run: sed -i.bak 's/-Xmx8G/-Xmx4G/' android/gradle.properties
 
