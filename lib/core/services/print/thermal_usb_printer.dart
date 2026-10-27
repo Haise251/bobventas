@@ -27,7 +27,8 @@ class ThermalUsbPrinter {
   List<Printer> get devices => List.unmodifiable(_devices);
 
   /// Escanea impresoras USB disponibles y devuelve la lista al terminar.
-  Future<List<Printer>> scanUsbPrinters({Duration wait = const Duration(seconds: 3)}) async {
+  Future<List<Printer>> scanUsbPrinters(
+      {Duration wait = const Duration(seconds: 3)}) async {
     _devices.clear();
     final completer = Completer<void>();
 
@@ -35,7 +36,9 @@ class ThermalUsbPrinter {
     _scanSub = _plugin.devicesStream.listen((List<Printer> printers) {
       _devices
         ..clear()
-        ..addAll(printers.where((p) => p.connectionType == ConnectionType.USB || p.connectionType == null));
+        ..addAll(printers.where((p) =>
+            p.connectionType == ConnectionType.USB ||
+            p.connectionType == null));
       if (!completer.isCompleted) completer.complete();
     });
 
@@ -65,9 +68,9 @@ class ThermalUsbPrinter {
   /// Conecta una impresora USB (pide permiso al usuario si hace falta).
   Future<bool> connect(Printer printer) async {
     try {
-      await _plugin.connect(printer);
-      _connected = printer;
-      return true;
+      final ok = await _plugin.connect(printer);
+      _connected = ok ? printer : null;
+      return ok;
     } catch (_) {
       _connected = null;
       return false;
@@ -77,8 +80,8 @@ class ThermalUsbPrinter {
   /// Indica si el dispositivo se reporta como conectado.
   Future<bool> isConnected(Printer printer) async {
     try {
-      return printer.isConnected == true || _connected != null &&
-          idOf(_connected!) == idOf(printer);
+      return printer.isConnected == true ||
+          _connected != null && idOf(_connected!) == idOf(printer);
     } catch (_) {
       return false;
     }
@@ -113,15 +116,22 @@ class ThermalUsbPrinter {
     _scanSub = null;
   }
 
-  /// Conveniencia: conecta, imprime y desconecta.
+  /// Conveniencia: conecta (aquí Android muestra el diálogo de permiso USB
+  /// la primera vez), imprime y desconecta.
   Future<bool> printOnce(Printer printer, List<int> bytes) async {
-    final ok = await printBytes(printer, bytes);
-    if (ok) {
-      // Pequeña espera para que la impresora vacíe el buffer antes de cerrar.
-      await Future.delayed(const Duration(milliseconds: 500));
+    // IMPORTANTE: sin connect() el plugin no tiene canal abierto y
+    // printData falla en silencio. connect() también dispara el permiso USB.
+    final connected = await connect(printer);
+    if (!connected) return false;
+    try {
+      final ok = await printBytes(printer, bytes);
+      if (ok) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+      return ok;
+    } finally {
       await disconnect(printer);
     }
-    return ok;
   }
 }
 

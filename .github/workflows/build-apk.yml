@@ -23,16 +23,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Instalar Flutter
+      - name: Instalar Flutter (versión fijada para que el NDK coincida)
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.47.7
 
       - name: Generar esqueleto Android (gradlew y archivos faltantes)
         run: flutter create --project-name bob_ventas --platforms android --org com.bobburgers .
 
       - name: Ajustar memoria de Gradle para el runner de CI
         run: sed -i.bak 's/-Xmx8G/-Xmx4G/' android/gradle.properties
+
+      - name: Pre-instalar NDK r28c (evita descarga frágil dentro de Gradle)
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358"
 
       - name: Descargar dependencias
         run: flutter pub get
